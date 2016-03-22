@@ -12,22 +12,22 @@
       </elements>
       <transitions>
         <de.muenchen.selenipo.impl.persistanceModel.TransitionImpl>
+          <type>LINK</type>
+          <locator>bEnter</locator>
+          <identifier>enterButton</identifier>
           <to class="de.muenchen.selenipo.impl.persistanceModel.PoGenericImpl">
             <identifier>listPo</identifier>
             <packageName>basePackage</packageName>
             <elements/>
             <transitions>
               <de.muenchen.selenipo.impl.persistanceModel.TransitionImpl>
-                <to class="de.muenchen.selenipo.impl.persistanceModel.PoGenericImpl" reference="../../../../../.."/>
                 <type>LINK</type>
                 <locator>ToDo-App</locator>
                 <identifier>toDo-App</identifier>
+                <to class="de.muenchen.selenipo.impl.persistanceModel.PoGenericImpl" reference="../../../../../.."/>
               </de.muenchen.selenipo.impl.persistanceModel.TransitionImpl>
             </transitions>
           </to>
-          <type reference="../to/transitions/de.muenchen.selenipo.impl.persistanceModel.TransitionImpl/type"/>
-          <locator>bEnter</locator>
-          <identifier>enterButton</identifier>
         </de.muenchen.selenipo.impl.persistanceModel.TransitionImpl>
       </transitions>
     </de.muenchen.selenipo.impl.persistanceModel.PoGenericImpl>
