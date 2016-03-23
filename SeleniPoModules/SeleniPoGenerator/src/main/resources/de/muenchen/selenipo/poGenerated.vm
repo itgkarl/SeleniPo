@@ -2,17 +2,18 @@
 #set( $GENERATED_PACKAGE = "$BASE_PACKAGE#if ( $poGeneric.getPackageName() && $poGeneric.getPackageName().trim().size() != 0 ).$poGeneric.getPackageName()#end" )
 #set( $EDIT_PACKAGE = "$BASE_PACKAGE" )
 #set( $CLASS_NAME = "$poGeneric.getIdentifier()Generated" )
+#set( $LUWAK_PACKAGE = "de.muenchen.itm.a23.luwak" )
 
 package $GENERATED_PACKAGE;
 
-import ${BASE_PACKAGE}.BasePo;
-import ${BASE_PACKAGE}.Control;
-import ${BASE_PACKAGE}.PageObject;
+import ${LUWAK_PACKAGE}.framework.pageObjects.PageObject;
+import ${LUWAK_PACKAGE}.framework.pageObjects.LuwakPo;
+import ${LUWAK_PACKAGE}.framework.util.Control;
 #foreach( $destPo in $destionationPos )
 import $EDIT_PACKAGE#if ( $destPo.getPackageName() && $destPo.getPackageName().trim().size() != 0 ).$destPo.getPackageName()#end.$destPo.getIdentifier();
 #end
 
-public class $CLASS_NAME extends BasePo {
+public class $CLASS_NAME extends LuwakPo {
 
 #foreach( $element in $poGeneric.getElements() )
 	public final Control $element.getIdentifier() = control(by.$element.getType().getByMethodName()("$element.getLocator()"));
@@ -37,7 +38,7 @@ public class $CLASS_NAME extends BasePo {
 #foreach( $element in $poGeneric.getElements() )
 	/**
 	 * Get the Control for the Element $transition.getIdentifier().
-	 * @return $transition.getIdentifier() - Element
+	 * @return $element.getIdentifier() - Element
 	 */
 	public Control get${display.capitalize($element.getIdentifier())}() {
 		return $element.getIdentifier();

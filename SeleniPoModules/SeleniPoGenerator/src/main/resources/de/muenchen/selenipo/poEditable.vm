@@ -3,12 +3,11 @@
 #set( $GENERATED_PACKAGE = "$BASE_PACKAGE#if ( $poGeneric.getPackageName() && $poGeneric.getPackageName().trim().size() != 0 ).$poGeneric.getPackageName()#end" )
 #set( $CLASS_NAME = "$poGeneric.getIdentifier()" )
 #set( $CLASS_NAME_SUPER = "$poGeneric.getIdentifier()Generated" )
+#set( $LUWAK_PACKAGE = "de.muenchen.itm.a23.luwak" )
 
 package $EDIT_PACKAGE;
 
-import ${BASE_PACKAGE}.BasePo;
-import ${BASE_PACKAGE}.Control;
-import ${BASE_PACKAGE}.PageObject;
+import ${LUWAK_PACKAGE}.framework.pageObjects.PageObject;
 import $GENERATED_PACKAGE.$CLASS_NAME_SUPER;
 
 public class $CLASS_NAME extends $CLASS_NAME_SUPER {
