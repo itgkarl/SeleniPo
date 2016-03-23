@@ -37,7 +37,7 @@ public class $CLASS_NAME extends LuwakPo {
  
 #foreach( $element in $poGeneric.getElements() )
 	/**
-	 * Get the Control for the Element $transition.getIdentifier().
+	 * Get the Control for the Element $element.getIdentifier().
 	 * @return $element.getIdentifier() - Element
 	 */
 	public Control get${display.capitalize($element.getIdentifier())}() {
