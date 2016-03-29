@@ -62,8 +62,7 @@ import de.muenchen.selenipo.view.poOverviewStates.TransitionTableState;
 
 public class PoOverviewController {
 
-	private static final Logger logger = Logger
-			.getLogger(PoOverviewController.class);
+	private static final Logger logger = Logger.getLogger(PoOverviewController.class);
 
 	@FXML
 	private TextField urlField;
@@ -117,14 +116,11 @@ public class PoOverviewController {
 		RED, GREEN;
 	};
 
-	final ObservableMap<Integer, Colour> elementColour = FXCollections
-			.observableHashMap();
+	final ObservableMap<Integer, Colour> elementColour = FXCollections.observableHashMap();
 
-	final ObservableMap<Integer, Colour> transitionColour = FXCollections
-			.observableHashMap();
+	final ObservableMap<Integer, Colour> transitionColour = FXCollections.observableHashMap();
 
-	final ObservableMap<Integer, Colour> htmlColour = FXCollections
-			.observableHashMap();
+	final ObservableMap<Integer, Colour> htmlColour = FXCollections.observableHashMap();
 
 	// Reference to the main application.
 	private MainApp mainApp;
@@ -137,8 +133,7 @@ public class PoOverviewController {
 	 */
 	public PoOverviewController() {
 		poOverviewState = new PoComboBoxState(this);
-		this.currentIdentStrat = IdentifiertStratFactory
-				.getStrat(IdentifiertStrat.BASE);
+		this.currentIdentStrat = IdentifiertStratFactory.getStrat(IdentifiertStrat.BASE);
 	}
 
 	/**
@@ -151,28 +146,18 @@ public class PoOverviewController {
 		transitionTable.setPlaceholder(new Label("Transitions of pageObject"));
 		htmlTable.setPlaceholder(new Label("Elements in browser"));
 
-		htmlLocatorColumn.setCellValueFactory(cellData -> cellData.getValue()
-				.locatorProperty());
-		htmlSelectorTypeColumn.setCellValueFactory(cellData -> cellData
-				.getValue().typeProperty().asString());
-		htmlIdentifierColumn.setCellValueFactory(cellData -> cellData
-				.getValue().identifierProperty());
+		htmlLocatorColumn.setCellValueFactory(cellData -> cellData.getValue().locatorProperty());
+		htmlSelectorTypeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty().asString());
+		htmlIdentifierColumn.setCellValueFactory(cellData -> cellData.getValue().identifierProperty());
 
-		elemLocatorColumn.setCellValueFactory(cellData -> cellData.getValue()
-				.locatorProperty());
-		elemSelectorTypeColumn.setCellValueFactory(cellData -> cellData
-				.getValue().typeProperty().asString());
-		elemIdentifierColumn.setCellValueFactory(cellData -> cellData
-				.getValue().identifierProperty());
+		elemLocatorColumn.setCellValueFactory(cellData -> cellData.getValue().locatorProperty());
+		elemSelectorTypeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty().asString());
+		elemIdentifierColumn.setCellValueFactory(cellData -> cellData.getValue().identifierProperty());
 
-		transLocatorColumn.setCellValueFactory(cellData -> cellData.getValue()
-				.locatorProperty());
-		transSelectorTypeColumn.setCellValueFactory(cellData -> cellData
-				.getValue().typeProperty().asString());
-		transIdentifierColumn.setCellValueFactory(cellData -> cellData
-				.getValue().identifierProperty());
-		transDestinationColumn.setCellValueFactory(cellData -> cellData
-				.getValue().destinationProperty().asString());
+		transLocatorColumn.setCellValueFactory(cellData -> cellData.getValue().locatorProperty());
+		transSelectorTypeColumn.setCellValueFactory(cellData -> cellData.getValue().typeProperty().asString());
+		transIdentifierColumn.setCellValueFactory(cellData -> cellData.getValue().identifierProperty());
+		transDestinationColumn.setCellValueFactory(cellData -> cellData.getValue().destinationProperty().asString());
 		StringConverter<PoGenericFx> poConverter = new StringConverter<PoGenericFx>() {
 			@Override
 			public String toString(PoGenericFx object) {
@@ -216,8 +201,7 @@ public class PoOverviewController {
 	private void setGrpOnlyNumberListener() {
 		grpField.textProperty().addListener(new ChangeListener<String>() {
 			@Override
-			public void changed(ObservableValue<? extends String> observable,
-					String oldValue, String newValue) {
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				if (!newValue.matches("\\d*") && newValue.length() <= 3) {
 					grpField.setText(oldValue);
 				}
@@ -226,169 +210,145 @@ public class PoOverviewController {
 	}
 
 	private void setElementRowFactory(TableView<ElementFx> elementTable) {
-		elementTable
-				.setRowFactory(new Callback<TableView<ElementFx>, TableRow<ElementFx>>() {
+		elementTable.setRowFactory(new Callback<TableView<ElementFx>, TableRow<ElementFx>>() {
+			@Override
+			public TableRow<ElementFx> call(TableView<ElementFx> tableView) {
+				final TableRow<ElementFx> row = new TableRow<ElementFx>() {
 					@Override
-					public TableRow<ElementFx> call(
-							TableView<ElementFx> tableView) {
-						final TableRow<ElementFx> row = new TableRow<ElementFx>() {
-							@Override
-							protected void updateItem(ElementFx elementFx,
-									boolean empty) {
-								super.updateItem(elementFx, empty);
+					protected void updateItem(ElementFx elementFx, boolean empty) {
+						super.updateItem(elementFx, empty);
+					}
+
+				};
+				elementColour.addListener(new MapChangeListener<Integer, Colour>() {
+					@Override
+					public void onChanged(
+							javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
+						row.getStyleClass().remove("okStatus");
+						row.getStyleClass().remove("errorStatus");
+						if (elementColour.get(row.getIndex()) != null) {
+							switch (elementColour.get(row.getIndex())) {
+							case GREEN:
+								row.getStyleClass().add("okStatus");
+								break;
+							case RED:
+								row.getStyleClass().add("errorStatus");
+								break;
+							default:
+								break;
 							}
+						}
 
-						};
-						elementColour
-								.addListener(new MapChangeListener<Integer, Colour>() {
-									@Override
-									public void onChanged(
-											javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
-										row.getStyleClass().remove("okStatus");
-										row.getStyleClass().remove(
-												"errorStatus");
-										if (elementColour.get(row.getIndex()) != null) {
-											switch (elementColour.get(row
-													.getIndex())) {
-											case GREEN:
-												row.getStyleClass().add(
-														"okStatus");
-												break;
-											case RED:
-												row.getStyleClass().add(
-														"errorStatus");
-												break;
-											default:
-												break;
-											}
-										}
-
-									}
-								});
-
-						setElementTransitionRowMenu(row);
-
-						// edit on doubleclick
-						row.setOnMouseClicked(event -> {
-							if (event.getClickCount() == 2 && (!row.isEmpty())) {
-								handleEdit();
-							}
-						});
-
-						return row;
 					}
 				});
+
+				setElementTransitionRowMenu(row);
+
+				// edit on doubleclick
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && (!row.isEmpty())) {
+						handleEdit();
+					}
+				});
+
+				return row;
+			}
+		});
 
 	}
 
 	private void setTransitionRowFactory(TableView<TransitionFx> transitionTable) {
-		transitionTable
-				.setRowFactory(new Callback<TableView<TransitionFx>, TableRow<TransitionFx>>() {
+		transitionTable.setRowFactory(new Callback<TableView<TransitionFx>, TableRow<TransitionFx>>() {
+			@Override
+			public TableRow<TransitionFx> call(TableView<TransitionFx> tableView) {
+				final TableRow<TransitionFx> row = new TableRow<TransitionFx>() {
 					@Override
-					public TableRow<TransitionFx> call(
-							TableView<TransitionFx> tableView) {
-						final TableRow<TransitionFx> row = new TableRow<TransitionFx>() {
-							@Override
-							protected void updateItem(
-									TransitionFx transitionFx, boolean empty) {
-								super.updateItem(transitionFx, empty);
-							}
-						};
-						transitionColour
-								.addListener(new MapChangeListener<Integer, Colour>() {
-									@Override
-									public void onChanged(
-											javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
-										row.getStyleClass().remove("okStatus");
-										row.getStyleClass().remove(
-												"errorStatus");
-										if (transitionColour.get(row.getIndex()) != null) {
-											switch (transitionColour.get(row
-													.getIndex())) {
-											case GREEN:
-												row.getStyleClass().add(
-														"okStatus");
-												break;
-											case RED:
-												row.getStyleClass().add(
-														"errorStatus");
-												break;
-											default:
-												break;
-											}
-										}
-
-									}
-								});
-
-						setElementTransitionRowMenu(row);
-
-						// edit on doubleclick
-						row.setOnMouseClicked(event -> {
-							if (event.getClickCount() == 2 && (!row.isEmpty())) {
-								handleEdit();
-							}
-						});
-
-						return row;
+					protected void updateItem(TransitionFx transitionFx, boolean empty) {
+						super.updateItem(transitionFx, empty);
 					}
+				};
+				transitionColour.addListener(new MapChangeListener<Integer, Colour>() {
+					@Override
+					public void onChanged(
+							javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
+						row.getStyleClass().remove("okStatus");
+						row.getStyleClass().remove("errorStatus");
+						if (transitionColour.get(row.getIndex()) != null) {
+							switch (transitionColour.get(row.getIndex())) {
+							case GREEN:
+								row.getStyleClass().add("okStatus");
+								break;
+							case RED:
+								row.getStyleClass().add("errorStatus");
+								break;
+							default:
+								break;
+							}
+						}
 
+					}
 				});
+
+				setElementTransitionRowMenu(row);
+
+				// edit on doubleclick
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && (!row.isEmpty())) {
+						handleEdit();
+					}
+				});
+
+				return row;
+			}
+
+		});
 	}
 
 	private void setHtmlRowFactory(TableView<ElementFx> htmlTable) {
-		htmlTable
-				.setRowFactory(new Callback<TableView<ElementFx>, TableRow<ElementFx>>() {
+		htmlTable.setRowFactory(new Callback<TableView<ElementFx>, TableRow<ElementFx>>() {
+			@Override
+			public TableRow<ElementFx> call(TableView<ElementFx> tableView) {
+				final TableRow<ElementFx> row = new TableRow<ElementFx>() {
 					@Override
-					public TableRow<ElementFx> call(
-							TableView<ElementFx> tableView) {
-						final TableRow<ElementFx> row = new TableRow<ElementFx>() {
-							@Override
-							protected void updateItem(ElementFx elementFx,
-									boolean empty) {
-								super.updateItem(elementFx, empty);
+					protected void updateItem(ElementFx elementFx, boolean empty) {
+						super.updateItem(elementFx, empty);
+					}
+
+				};
+				htmlColour.addListener(new MapChangeListener<Integer, Colour>() {
+					@Override
+					public void onChanged(
+							javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
+						row.getStyleClass().remove("okStatus");
+						row.getStyleClass().remove("errorStatus");
+						if (htmlColour.get(row.getIndex()) != null) {
+							switch (htmlColour.get(row.getIndex())) {
+							case GREEN:
+								row.getStyleClass().add("okStatus");
+								break;
+							case RED:
+								row.getStyleClass().add("errorStatus");
+								break;
+							default:
+								break;
 							}
+						}
 
-						};
-						htmlColour
-								.addListener(new MapChangeListener<Integer, Colour>() {
-									@Override
-									public void onChanged(
-											javafx.collections.MapChangeListener.Change<? extends Integer, ? extends Colour> change) {
-										row.getStyleClass().remove("okStatus");
-										row.getStyleClass().remove(
-												"errorStatus");
-										if (htmlColour.get(row.getIndex()) != null) {
-											switch (htmlColour.get(row
-													.getIndex())) {
-											case GREEN:
-												row.getStyleClass().add(
-														"okStatus");
-												break;
-											case RED:
-												row.getStyleClass().add(
-														"errorStatus");
-												break;
-											default:
-												break;
-											}
-										}
-
-									}
-								});
-
-						setHtmlRowMenu(row);
-
-						// edit on doubleclick
-						row.setOnMouseClicked(event -> {
-							if (event.getClickCount() == 2 && (!row.isEmpty())) {
-								handleMoveHtmlToElement();
-							}
-						});
-
-						return row;
 					}
 				});
+
+				setHtmlRowMenu(row);
+
+				// edit on doubleclick
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && (!row.isEmpty())) {
+						handleMoveHtmlToElement();
+					}
+				});
+
+				return row;
+			}
+		});
 	}
 
 	private void setElementTransitionRowMenu(TableRow<?> row) {
@@ -422,12 +382,10 @@ public class PoOverviewController {
 				handleTestAndClick();
 			}
 		});
-		rowMenu.getItems().addAll(editItem, removeItem, testWithMessage,
-				testAndClick);
+		rowMenu.getItems().addAll(editItem, removeItem, testWithMessage, testAndClick);
 		// only display context menu for non-null items:
 		row.contextMenuProperty().bind(
-				Bindings.when(Bindings.isNotNull(row.itemProperty()))
-						.then(rowMenu).otherwise((ContextMenu) null));
+				Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
 
 	}
 
@@ -451,8 +409,7 @@ public class PoOverviewController {
 		rowMenu.getItems().addAll(testWithMessage, testAndClick);
 		// only display context menu for non-null items:
 		row.contextMenuProperty().bind(
-				Bindings.when(Bindings.isNotNull(row.itemProperty()))
-						.then(rowMenu).otherwise((ContextMenu) null));
+				Bindings.when(Bindings.isNotNull(row.itemProperty())).then(rowMenu).otherwise((ContextMenu) null));
 	}
 
 	@FXML
@@ -463,43 +420,32 @@ public class PoOverviewController {
 		elementTable.setItems(null);
 		transitionTable.setItems(null);
 		if (selectedIndex >= 0) {
-			elementTable.setItems(mainApp.getPoModelFx().getPoGenericsFx()
-					.get(selectedIndex).getElementsFx());
-			transitionTable.setItems(mainApp.getPoModelFx().getPoGenericsFx()
-					.get(selectedIndex).getTransitionsFx());
+			elementTable.setItems(mainApp.getPoModelFx().getPoGenericsFx().get(selectedIndex).getElementsFx());
+			transitionTable.setItems(mainApp.getPoModelFx().getPoGenericsFx().get(selectedIndex).getTransitionsFx());
 		}
 	}
 
 	@FXML
 	private void htmlSelectorComboBoxAction() {
 		resetColours();
-		int selectedIndex = htmlSelectorComboBox.getSelectionModel()
-				.getSelectedIndex();
+		int selectedIndex = htmlSelectorComboBox.getSelectionModel().getSelectedIndex();
 
 		htmlTable.setItems(null);
 		if (selectedIndex >= 0) {
-			Selector selectedType = htmlSelectorComboBox.getSelectionModel()
-					.getSelectedItem();
+			Selector selectedType = htmlSelectorComboBox.getSelectionModel().getSelectedItem();
 			WebDriver driver = mainApp.getWebDriver();
 			if (driver != null) {
-				HtmlParserService htmlParserService = mainApp
-						.getHtmlParserService();
-				ConverterService converterService = mainApp
-						.getConverterService();
+				HtmlParserService htmlParserService = mainApp.getHtmlParserService();
+				ConverterService converterService = mainApp.getConverterService();
 				String htmlString = driver.getPageSource();
-				PoGeneric htmlPoGeneric = htmlParserService
-						.parseElementsFromHtmlForType(htmlString, selectedType,
-								currentIdentStrat);
-				logger.debug(String.format(
-						"Habe %s Elemente gefunden. Convertiere sie..",
+				PoGeneric htmlPoGeneric = htmlParserService.parseElementsFromHtmlForType(htmlString, selectedType,
+						currentIdentStrat);
+				logger.debug(String.format("Habe %s Elemente gefunden. Convertiere sie..",
 						htmlPoGeneric.getElements().size()));
-				PoGenericFx htmlPoGenericFx = converterService
-						.convertToPoGenericFx(htmlPoGeneric);
-				logger.debug(String.format("Setze %s Elemente in Gui..",
-						htmlPoGenericFx.getElements().size()));
+				PoGenericFx htmlPoGenericFx = converterService.convertToPoGenericFx(htmlPoGeneric);
+				logger.debug(String.format("Setze %s Elemente in Gui..", htmlPoGenericFx.getElements().size()));
 				mainApp.setHtmlPoGenericFx(htmlPoGenericFx);
-				htmlTable
-						.setItems(mainApp.getHtmlPoGenericFx().getElementsFx());
+				htmlTable.setItems(mainApp.getHtmlPoGenericFx().getElementsFx());
 
 			} else {
 				logger.debug("Kein Parsing, da Webdriver null.");
@@ -511,10 +457,10 @@ public class PoOverviewController {
 	private void handleIdentCheckBox() {
 		logger.debug("IdentifiertCheckbox pressed..");
 		if (identCheckbox.isSelected()) {
-			this.currentIdentStrat = IdentifiertStratFactory.getStrat(
-					IdentifiertStrat.MATCHER, matcherField, attrField, grpField);
+			this.currentIdentStrat = IdentifiertStratFactory.getStrat(IdentifiertStrat.MATCHER, matcherField, attrField,
+					grpField);
 		} else {
-			IdentifiertStratFactory.getStrat(IdentifiertStrat.BASE);
+			this.currentIdentStrat = IdentifiertStratFactory.getStrat(IdentifiertStrat.BASE);
 		}
 	}
 
@@ -719,8 +665,8 @@ public class PoOverviewController {
 		alert.initOwner(mainApp.getPrimaryStage());
 		alert.setTitle("No Browser");
 		alert.setHeaderText("Browser not started.");
-		alert.setContentText("Please start the Browser with the startbutton and"
-				+ System.lineSeparator() + "navigate to the website.");
+		alert.setContentText("Please start the Browser with the startbutton and" + System.lineSeparator()
+				+ "navigate to the website.");
 
 		alert.showAndWait();
 		return alert;
@@ -768,8 +714,7 @@ public class PoOverviewController {
 		alert.setResizable(true);
 		alert.initOwner(mainApp.getPrimaryStage());
 		alert.setTitle("Element not found");
-		alert.setHeaderText(String.format("Exception occured: %s",
-				ex.getClass()));
+		alert.setHeaderText(String.format("Exception occured: %s", ex.getClass()));
 		// Create expandable Exception.
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
@@ -799,8 +744,7 @@ public class PoOverviewController {
 		return alert;
 	}
 
-	public Alert createWebElementInfo(Stage stage, WebElement webElement,
-			WebDriver driver) {
+	public Alert createWebElementInfo(Stage stage, WebElement webElement, WebDriver driver) {
 		StringBuffer message = new StringBuffer();
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setResizable(true);
@@ -810,13 +754,11 @@ public class PoOverviewController {
 		message.append("Text: " + webElement.getText() + System.lineSeparator());
 		message.append("Attributes:" + System.lineSeparator());
 		@SuppressWarnings("unchecked")
-		Map<String, Object> executeScript = (Map<String, Object>) ((JavascriptExecutor) driver)
-				.executeScript(
-						"var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;",
-						webElement);
+		Map<String, Object> executeScript = (Map<String, Object>) ((JavascriptExecutor) driver).executeScript(
+				"var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;",
+				webElement);
 		for (Map.Entry<String, Object> entry : executeScript.entrySet()) {
-			message.append("	-- " + entry.getKey() + ": " + entry.getValue()
-					+ System.lineSeparator());
+			message.append("	-- " + entry.getKey() + ": " + entry.getValue() + System.lineSeparator());
 		}
 		TextArea textArea = new TextArea(message.toString());
 		textArea.setEditable(false);
