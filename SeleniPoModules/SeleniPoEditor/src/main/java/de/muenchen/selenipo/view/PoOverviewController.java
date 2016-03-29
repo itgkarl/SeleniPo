@@ -5,6 +5,8 @@ import java.io.StringWriter;
 import java.util.Map;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -15,6 +17,7 @@ import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -34,6 +37,7 @@ import javafx.util.StringConverter;
 
 import org.apache.commons.chain.web.MapEntry;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.StringUtil;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -41,6 +45,9 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import de.muenchen.selenipo.ConverterService;
 import de.muenchen.selenipo.HtmlParserService;
+import de.muenchen.selenipo.HtmlParserService.IdentifiertStratFactory;
+import de.muenchen.selenipo.HtmlParserService.IdentifiertStratFactory.IdentifiertStrat;
+import de.muenchen.selenipo.IdentifierStrategy;
 import de.muenchen.selenipo.MainApp;
 import de.muenchen.selenipo.PoGeneric;
 import de.muenchen.selenipo.Selector;
@@ -95,6 +102,17 @@ public class PoOverviewController {
 	@FXML
 	private ComboBox<Selector> htmlSelectorComboBox;
 
+	@FXML
+	private TextField matcherField;
+	@FXML
+	private TextField attrField;
+	@FXML
+	private TextField grpField;
+	@FXML
+	private CheckBox identCheckbox;
+
+	private IdentifierStrategy currentIdentStrat;
+
 	public enum Colour {
 		RED, GREEN;
 	};
@@ -119,6 +137,8 @@ public class PoOverviewController {
 	 */
 	public PoOverviewController() {
 		poOverviewState = new PoComboBoxState(this);
+		this.currentIdentStrat = IdentifiertStratFactory
+				.getStrat(IdentifiertStrat.BASE);
 	}
 
 	/**
@@ -178,6 +198,8 @@ public class PoOverviewController {
 		transitionTable.setOnKeyPressed(getDelteOnDelKeyEvent());
 		poComboBox.setOnKeyPressed(getDelteOnDelKeyEvent());
 
+		setGrpOnlyNumberListener();
+
 	}
 
 	EventHandler<KeyEvent> getDelteOnDelKeyEvent() {
@@ -189,6 +211,18 @@ public class PoOverviewController {
 				}
 			}
 		};
+	}
+
+	private void setGrpOnlyNumberListener() {
+		grpField.textProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable,
+					String oldValue, String newValue) {
+				if (!newValue.matches("\\d*") && newValue.length() <= 3) {
+					grpField.setText(oldValue);
+				}
+			}
+		});
 	}
 
 	private void setElementRowFactory(TableView<ElementFx> elementTable) {
@@ -244,6 +278,7 @@ public class PoOverviewController {
 						return row;
 					}
 				});
+
 	}
 
 	private void setTransitionRowFactory(TableView<TransitionFx> transitionTable) {
@@ -453,7 +488,8 @@ public class PoOverviewController {
 						.getConverterService();
 				String htmlString = driver.getPageSource();
 				PoGeneric htmlPoGeneric = htmlParserService
-						.parseElementsFromHtmlForType(htmlString, selectedType);
+						.parseElementsFromHtmlForType(htmlString, selectedType,
+								currentIdentStrat);
 				logger.debug(String.format(
 						"Habe %s Elemente gefunden. Convertiere sie..",
 						htmlPoGeneric.getElements().size()));
@@ -468,6 +504,17 @@ public class PoOverviewController {
 			} else {
 				logger.debug("Kein Parsing, da Webdriver null.");
 			}
+		}
+	}
+
+	@FXML
+	private void handleIdentCheckBox() {
+		logger.debug("IdentifiertCheckbox pressed..");
+		if (identCheckbox.isSelected()) {
+			this.currentIdentStrat = IdentifiertStratFactory.getStrat(
+					IdentifiertStrat.MATCHER, matcherField, attrField, grpField);
+		} else {
+			IdentifiertStratFactory.getStrat(IdentifiertStrat.BASE);
 		}
 	}
 
@@ -490,7 +537,7 @@ public class PoOverviewController {
 		resetColours();
 		poOverviewState.handleNew();
 	}
-	
+
 	/**
 	 * Called when the user clicks on the new button next to the Po combobox.
 	 */
@@ -590,11 +637,6 @@ public class PoOverviewController {
 		}
 	}
 
-	/**
-	 * Called when the user clicks on the edit button.
-	 * 
-	 * @throws InterruptedException
-	 */
 	@FXML
 	private void handleUrlStart() throws InterruptedException {
 		logger.debug(String.format("Url Start.. [%s]", urlField.getText()));
@@ -854,4 +896,11 @@ public class PoOverviewController {
 		return poComboBox;
 	}
 
+	public IdentifierStrategy getCurrentIdentStrat() {
+		return currentIdentStrat;
+	}
+
+	public void setCurrentIdentStrat(IdentifierStrategy currentIdentStrat) {
+		this.currentIdentStrat = currentIdentStrat;
+	}
 }

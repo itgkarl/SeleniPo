@@ -1,14 +1,14 @@
 package de.muenchen.selenipo.impl;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.muenchen.selenipo.HtmlParserService;
+import de.muenchen.selenipo.IdentifierStrategy;
 import de.muenchen.selenipo.PoGeneric;
 import de.muenchen.selenipo.Selector;
 import de.muenchen.selenipo.impl.persistanceModel.ElementImpl;
@@ -18,8 +18,13 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 	private static final Logger logger = Logger
 			.getLogger(HtmlParserServiceImpl.class);
 
+	@Autowired
+	private IdentifierStrategy identifierStrat;
+
 	@Override
-	public PoGeneric parseElementsFromHtmlForType(String html, Selector type) {
+	public PoGeneric parseElementsFromHtmlForType(String html, Selector type,
+			IdentifierStrategy identifierStrategy) {
+		this.identifierStrat = identifierStrategy;
 		PoGeneric poGeneric = null;
 		switch (type) {
 		case LINK:
@@ -72,29 +77,29 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.SELECT,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.SELECT, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.SELECT,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.SELECT, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.SELECT,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.SELECT, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.SELECT,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.SELECT, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 
@@ -107,33 +112,34 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		final String PREFIX = "tf";
 		PoGeneric poGeneric = new PoGenericImpl();
 		Document doc = Jsoup.parse(html);
-		Elements elements = doc.select("input[type = text], input[type = search],input[type = password],input[type = tel],input[type = url],input[type = email]");
+		Elements elements = doc
+				.select("input[type = text], input[type = search],input[type = password],input[type = tel],input[type = url],input[type = email]");
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTFIELD,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTFIELD, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTFIELD,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTFIELD, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTFIELD,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTFIELD, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTFIELD,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTFIELD, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 
@@ -150,29 +156,29 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTAREA,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTAREA, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTAREA,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTAREA, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTAREA,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTAREA, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.TEXTAREA,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.TEXTAREA, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 
@@ -189,18 +195,18 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.OPTION,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.OPTION, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			} else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.OPTION,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.OPTION, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			} else if (element.hasText()) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.OPTION,
-						element.text());
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.OPTION, element.text());
 				poGeneric.getElements().add(createdElement);
 			}
 
@@ -216,29 +222,29 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.RADIOBUTTON,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.RADIOBUTTON, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.RADIOBUTTON,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.RADIOBUTTON, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.RADIOBUTTON,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.RADIOBUTTON, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.RADIOBUTTON,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.RADIOBUTTON, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 		}
@@ -253,29 +259,29 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.CHECKBOX,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.CHECKBOX, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.CHECKBOX,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.CHECKBOX, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.CHECKBOX,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.CHECKBOX, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.CHECKBOX,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.CHECKBOX, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 		}
@@ -290,8 +296,8 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("href")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.HREF,
-						element.attr("href"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.HREF, element.attr("href"));
 				poGeneric.getElements().add(createdElement);
 			}
 		}
@@ -306,8 +312,8 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.ID,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.ID, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 		}
@@ -317,7 +323,8 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 	/**
 	 * Sucht nach allen Links für den vorhanden ist: id or text or title
 	 * 
-	 * @param html Quelltext der zu untersuchenden Seite
+	 * @param html
+	 *            Quelltext der zu untersuchenden Seite
 	 * @return PoGeneric- neues Page Object mit den gefundenen Elementen
 	 */
 	private PoGeneric parseElementsFromHtmlForLink(String html) {
@@ -328,22 +335,22 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.LINK,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.LINK, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasText()) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.LINK,
-						element.text());
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.LINK, element.text());
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("title")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.LINK,
-						element.attr("title"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.LINK, element.attr("title"));
 				poGeneric.getElements().add(createdElement);
 			}
 		}
@@ -359,29 +366,29 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elements) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.INPUT,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.INPUT, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.INPUT,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.INPUT, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.INPUT,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.INPUT, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("placeholder")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.INPUT,
-						element.attr("placeholder"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.INPUT, element.attr("placeholder"));
 				poGeneric.getElements().add(createdElement);
 			}
 
@@ -399,36 +406,36 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elementsInput) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("name")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("name"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("name"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("title")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("title"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("title"));
 				poGeneric.getElements().add(createdElement);
 			} else if (element.hasAttr("type")
 					&& element.attr("type").equals("image")) {
 				if (element.hasAttr("alt")) {
 					de.muenchen.selenipo.Element createdElement = createElement(
-							genIdentefier(PREFIX, element), Selector.BUTTON,
-							element.attr("alt"));
+							identifierStrat.genIdentefier(PREFIX, element),
+							Selector.BUTTON, element.attr("alt"));
 					poGeneric.getElements().add(createdElement);
 				}
 			}
@@ -439,33 +446,37 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		for (Element element : elementsButton) {
 			if (element.hasAttr("id")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("id"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("id"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("value")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("value"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("value"));
 				poGeneric.getElements().add(createdElement);
 			} else if (element.hasText()) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.text());
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.text());
 				poGeneric.getElements().add(createdElement);
 			}
 
 			else if (element.hasAttr("title")) {
 				de.muenchen.selenipo.Element createdElement = createElement(
-						genIdentefier(PREFIX, element), Selector.BUTTON,
-						element.attr("title"));
+						identifierStrat.genIdentefier(PREFIX, element),
+						Selector.BUTTON, element.attr("title"));
 				poGeneric.getElements().add(createdElement);
 			}
 
 		}
 
 		return poGeneric;
+	}
+
+	private void chooseIdentifierStrat() {
+		setIdentifierStrategy(new IdentifierBaseStrat());
 	}
 
 	private de.muenchen.selenipo.Element createElement(String identifier,
@@ -475,37 +486,12 @@ public class HtmlParserServiceImpl implements HtmlParserService {
 		return elem;
 	}
 
-	private String genIdentefier(String prefix, Element element) {
-		String returnIdentefier = prefix;
-		String suffix = "";
-		if (element.hasText()) {
-			suffix = prepareIdentefierString(element.text());
-		}
-		if (suffix.equals("") && element.hasAttr("value")) {
-			suffix = prepareIdentefierString(element.attr("value"));
-		}
-		if (suffix.equals("") && element.hasAttr("name")) {
-			suffix = prepareIdentefierString(element.attr("name"));
-		}
-		if (suffix.equals("") && element.hasAttr("id")) {
-			suffix = prepareIdentefierString(element.attr("id"));
-		}
-		if (suffix.equals("") && element.hasAttr("title")) {
-			suffix = prepareIdentefierString(element.attr("title"));
-		}
-
-		if (suffix.equals("")) {
-			suffix = RandomStringUtils.randomAlphanumeric(6);
-		}
-		if (suffix.length() > 10) {
-			suffix = suffix.substring(0, 10);
-		}
-
-		return returnIdentefier + suffix;
+	public IdentifierStrategy getIdentifierStrategy() {
+		return identifierStrat;
 	}
 
-	private String prepareIdentefierString(String str) {
-		return WordUtils.capitalize(str).replaceAll("\\s+", "")
-				.replaceAll("[^a-zA-Z]+", "");
+	public void setIdentifierStrategy(IdentifierStrategy identifierStrategy) {
+		this.identifierStrat = identifierStrategy;
 	}
+
 }
