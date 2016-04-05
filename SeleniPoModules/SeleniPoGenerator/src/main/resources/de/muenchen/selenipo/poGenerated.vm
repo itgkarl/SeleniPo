@@ -44,6 +44,22 @@ public class $CLASS_NAME extends LuwakPo {
 		return $element.getIdentifier();
 	}
 	
+#if ($element.getType() == "TEXTFIELD" || $element.getType() == "TEXTAREA")
+	/**
+	 * Loest das Control-Object $element.getIdentifier() gegen die Webseite auf und leitet den uebergebenen
+	 * String an die sendKeys-Methode des {@link WebElement} weiter. Zuvor wird
+	 * ein clear() auf dem {@link WebElement} ausgefuehrt um eventuellen Text zu
+	 * entfernen.
+	 * 
+	 * @param text
+	 *            - Eingabe die per sendKey an das Element gesendet werden soll.
+	 */
+    public ${poGeneric.getIdentifier()} put${display.capitalize($element.getIdentifier())}(String text) {
+      	${element.getIdentifier()}.set(text);
+		return (${poGeneric.getIdentifier()}) this;
+	}
+#end
+	
 #end
 #foreach( $transition in $poGeneric.getTransitions() )
 	/**
