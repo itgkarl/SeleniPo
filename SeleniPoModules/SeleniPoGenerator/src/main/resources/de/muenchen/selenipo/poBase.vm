@@ -1,0 +1,16 @@
+#set( $BASE_PACKAGE = $basePackagePath )
+#set( $EDIT_PACKAGE = $BASE_PACKAGE )
+#set( $LUWAK_PACKAGE = "de.muenchen.itm.a23.luwak" )
+
+package $EDIT_PACKAGE;
+
+import ${LUWAK_PACKAGE}.framework.pageObjects.PageObject;
+import ${LUWAK_PACKAGE}.framework.pageObjects.LuwakPo;
+
+public class BasePo extends LuwakPo {
+
+	public BasePo(PageObject po) {
+		super(po);
+	}
+
+}
