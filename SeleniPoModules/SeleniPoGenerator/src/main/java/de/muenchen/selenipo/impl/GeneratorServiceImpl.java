@@ -38,8 +38,7 @@ import de.muenchen.selenipo.Transition;
  */
 public class GeneratorServiceImpl implements GeneratorService {
 
-	private static final Logger logger = Logger
-			.getLogger(GeneratorServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(GeneratorServiceImpl.class);
 
 	public static final String CONFIG_FILE = "gernerator.properties";
 
@@ -53,23 +52,20 @@ public class GeneratorServiceImpl implements GeneratorService {
 	private DisplayTool display;
 
 	@Override
-	public Map<String, String> generatePageObjects(final PoModel poModel,
-			final String rootFolder) throws IOException {
+	public Map<String, String> generatePageObjects(final PoModel poModel, final String rootFolder) throws IOException {
 		Map<String, String> returnValue = new HashMap<String, String>();
 		List<PoGeneric> poGenerics = poModel.getPoGenerics();
 		for (PoGeneric poGeneric : poGenerics) {
-			logger.debug(String.format("Starte Generierung für Po: [%s]",
-					poGeneric.getIdentifier()));
-			Map<String, String> poMap = generatePageObject(poGeneric,
-					rootFolder);
+			logger.debug(String.format("Starte Generierung für Po: [%s]", poGeneric.getIdentifier()));
+			Map<String, String> poMap = generatePageObject(poGeneric, rootFolder);
 			returnValue.putAll(poMap);
 		}
 		return returnValue;
 	}
 
 	@Override
-	public Map<String, String> generatePageObject(final PoGeneric poGeneric,
-			final String rootFolder) throws IOException {
+	public Map<String, String> generatePageObject(final PoGeneric poGeneric, final String rootFolder)
+			throws IOException {
 		// Map to return
 		Map<String, String> returnValue = new HashMap<String, String>();
 		// Lese die Zielpfade ab dem Rootfolder aus der config aus
@@ -87,12 +83,9 @@ public class GeneratorServiceImpl implements GeneratorService {
 		String generatedBasePath = props.getProperty("generator.generatedPath");
 		String editableBasePath = props.getProperty("generator.editablePath");
 		String packagePath = props.getProperty("generator.packagePath");
-		logger.debug(String.format("Base path für generated: %s",
-				generatedBasePath));
-		logger.debug(String.format("Base path für editable: %s",
-				editableBasePath));
-		logger.debug(String.format("Base Package path für edit/generated: %s",
-				packagePath));
+		logger.debug(String.format("Base path für generated: %s", generatedBasePath));
+		logger.debug(String.format("Base path für editable: %s", editableBasePath));
+		logger.debug(String.format("Base Package path für edit/generated: %s", packagePath));
 
 		// Befülle liste mit unterschiedlichen DestinationPos für die Imports
 		Set<PoGeneric> destinationPos = new HashSet<PoGeneric>();
@@ -111,10 +104,30 @@ public class GeneratorServiceImpl implements GeneratorService {
 		logger.debug("-Erzeuge Generated PO:");
 		// Generate Path
 		if (poGeneric.getPackageName() != null) {
-			packagePath = packagePath + "/"
-					+ poGeneric.getPackageName().replaceAll("\\.", "/");
+			packagePath = packagePath + "/" + poGeneric.getPackageName().replaceAll("\\.", "/");
 		}
 		logger.debug(String.format("-- packagePath: [%s]", packagePath));
+
+		// Erzeuge BasePo
+		// Erzeuge Edit Po
+
+		// Get Template
+		Template tBase;
+		try {
+			// Eigenes Tamplate von User vorhanden?
+			tBase = velocityEngineFilesystem.getTemplate("poBase.vm");
+			logger.info("Verwende poBase.vm des Users");
+		} catch (Exception e) {
+			tBase = velocityEngineClasspath.getTemplate("de/muenchen/selenipo/poBase.vm");
+			logger.info("Verwende poBase.vm aus resourcen.");
+		}
+		final String wholePathBase = String.format("%s/%s/%s.java", rootFolder, editableBasePath, "BasePo");
+		// Überprüfe ob das Po bereits vorhanden ist
+		if (!doesEditPoAlreadyExist(wholePathBase)) {
+			// Base Po wird nicht in die rückgabe übernommen da einfach eine
+			// leere Klasse.
+			writeFile(wholePathBase, context, tBase, poGeneric);
+		}
 
 		// Erzeuge Generated Po
 		// Get Template
@@ -124,15 +137,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 			tGenerated = velocityEngineFilesystem.getTemplate("poGenerated.vm");
 			logger.info("Verwende poGenerated.vm des Users");
 		} catch (Exception e) {
-			tGenerated = velocityEngineClasspath
-					.getTemplate("de/muenchen/selenipo/poGenerated.vm");
+			tGenerated = velocityEngineClasspath.getTemplate("de/muenchen/selenipo/poGenerated.vm");
 			logger.info("Verwende poGenerated.vm aus resourcen.");
 		}
-		final String wholePathGenerated = String.format(
-				"%s/%s/%s/%sGenerated.java", rootFolder, generatedBasePath,
+		final String wholePathGenerated = String.format("%s/%s/%s/%sGenerated.java", rootFolder, generatedBasePath,
 				packagePath, poGeneric.getIdentifier());
-		Map<String, String> mapGenerated = writeFile(wholePathGenerated,
-				context, tGenerated, poGeneric);
+		Map<String, String> mapGenerated = writeFile(wholePathGenerated, context, tGenerated, poGeneric);
 
 		// Erzeuge Edit Po
 
@@ -143,12 +153,10 @@ public class GeneratorServiceImpl implements GeneratorService {
 			tEdit = velocityEngineFilesystem.getTemplate("poEditable.vm");
 			logger.info("Verwende poEdit.vm des Users");
 		} catch (Exception e) {
-			tEdit = velocityEngineClasspath
-					.getTemplate("de/muenchen/selenipo/poEditable.vm");
+			tEdit = velocityEngineClasspath.getTemplate("de/muenchen/selenipo/poEditable.vm");
 			logger.info("Verwende poEdit.vm aus resourcen.");
 		}
-		final String wholePathEdit = String.format("%s/%s/%s/%s.java",
-				rootFolder, editableBasePath, packagePath,
+		final String wholePathEdit = String.format("%s/%s/%s/%s.java", rootFolder, editableBasePath, packagePath,
 				poGeneric.getIdentifier());
 		// Überprüfe ob das Po bereits vorhanden ist
 		if (!doesEditPoAlreadyExist(wholePathEdit)) {
@@ -166,14 +174,12 @@ public class GeneratorServiceImpl implements GeneratorService {
 			logger.debug(String.format("EditPo [%s] gefunden.", wholePath));
 			return true;
 		} else {
-			logger.debug(String
-					.format("EditPo [%s] nicht gefunden.", wholePath));
+			logger.debug(String.format("EditPo [%s] nicht gefunden.", wholePath));
 			return false;
 		}
 	}
 
-	private Map<String, String> writeFile(String wholePath,
-			VelocityContext context, Template t, PoGeneric poGeneric)
+	private Map<String, String> writeFile(String wholePath, VelocityContext context, Template t, PoGeneric poGeneric)
 			throws IOException {
 		Map<String, String> returnValue = new HashMap<String, String>();
 		logger.debug(String.format("-- wholePath: %s", wholePath));

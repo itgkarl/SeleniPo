@@ -7,19 +7,19 @@
 package $GENERATED_PACKAGE;
 
 import ${LUWAK_PACKAGE}.framework.pageObjects.PageObject;
-import ${LUWAK_PACKAGE}.framework.pageObjects.LuwakPo;
 import ${LUWAK_PACKAGE}.framework.util.Control;
+import ${EDIT_PACKAGE}.BasePo;
 #foreach( $destPo in $destionationPos )
 import $EDIT_PACKAGE#if ( $destPo.getPackageName() && $destPo.getPackageName().trim().size() != 0 ).$destPo.getPackageName()#end.$destPo.getIdentifier();
 #end
 
-public class $CLASS_NAME extends LuwakPo {
+public class $CLASS_NAME extends BasePo {
 
 #foreach( $element in $poGeneric.getElements() )
-	public final Control $element.getIdentifier() = control(by.$element.getType().getByMethodName()("$element.getLocator()"));
+	private final Control $element.getIdentifier() = control(by.$element.getType().getByMethodName()("$element.getLocator()"));
 #end
 #foreach( $transition in $poGeneric.getTransitions() )
-	public final Control $transition.getIdentifier() = control(by.$transition.getType().getByMethodName()("$transition.getLocator()"));
+	private final Control $transition.getIdentifier() = control(by.$transition.getType().getByMethodName()("$transition.getLocator()"));
 #end
 
 	public $CLASS_NAME(PageObject po) {
