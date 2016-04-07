@@ -59,6 +59,43 @@ public class $CLASS_NAME extends BasePo {
 		return (${poGeneric.getIdentifier()}) this;
 	}
 #end
+#if ($element.getType() == "SELECT")
+	/**
+	 * Loest das Control-Object $element.getIdentifier() gegen die Webseite auf und leitet den uebergebenen
+	 * String an die select-Methode des {@link Control} weiter.
+	 * 
+	 * @param text
+	 *            - Eingabe die per sendKey an das Element gesendet werden soll.
+	 */
+    public ${poGeneric.getIdentifier()} select${display.capitalize($element.getIdentifier())}(String text) {
+      	${element.getIdentifier()}.select(text);
+		return (${poGeneric.getIdentifier()}) this;
+	}
+#end
+
+#if ($element.getType() == "RADIOBUTTON" || $element.getType() == "CHECKBOX")
+	/**
+	 * Loest das Control-Object $element.getIdentifier() gegen die Webseite auf und leitet den uebergebenen
+	 * String an die check-Methode des {@link Control} weiter.
+	 * 
+	 */
+    public ${poGeneric.getIdentifier()} check${display.capitalize($element.getIdentifier())}() {
+      	${element.getIdentifier()}.check();
+		return (${poGeneric.getIdentifier()}) this;
+	}
+#end
+#if ($element.getType() == "CHECKBOX")
+	
+	/**
+	 * Loest das Control-Object $element.getIdentifier() gegen die Webseite auf und leitet den uebergebenen
+	 * String an die check-Methode des {@link Control} weiter.
+	 * 
+	 */
+    public ${poGeneric.getIdentifier()} uncheck${display.capitalize($element.getIdentifier())}() {
+      	${element.getIdentifier()}.uncheck();
+		return (${poGeneric.getIdentifier()}) this;
+	}
+#end
 	
 #end
 #foreach( $transition in $poGeneric.getTransitions() )

@@ -103,13 +103,13 @@ public class GeneratorServiceImpl implements GeneratorService {
 		logger.debug(String.format("RootFolder: %s", rootFolder));
 		logger.debug("-Erzeuge Generated PO:");
 		// Generate Path
+		String fullPackagePath = packagePath;
 		if (poGeneric.getPackageName() != null) {
-			packagePath = packagePath + "/" + poGeneric.getPackageName().replaceAll("\\.", "/");
+			fullPackagePath = packagePath + "/" + poGeneric.getPackageName().replaceAll("\\.", "/");
 		}
 		logger.debug(String.format("-- packagePath: [%s]", packagePath));
 
 		// Erzeuge BasePo
-		// Erzeuge Edit Po
 
 		// Get Template
 		Template tBase;
@@ -121,7 +121,8 @@ public class GeneratorServiceImpl implements GeneratorService {
 			tBase = velocityEngineClasspath.getTemplate("de/muenchen/selenipo/poBase.vm");
 			logger.info("Verwende poBase.vm aus resourcen.");
 		}
-		final String wholePathBase = String.format("%s/%s/%s.java", rootFolder, editableBasePath, "BasePo");
+		final String wholePathBase = String.format("%s/%s/%s/%s.java", rootFolder, editableBasePath, packagePath,
+				"BasePo");
 		// Überprüfe ob das Po bereits vorhanden ist
 		if (!doesEditPoAlreadyExist(wholePathBase)) {
 			// Base Po wird nicht in die rückgabe übernommen da einfach eine
@@ -141,7 +142,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 			logger.info("Verwende poGenerated.vm aus resourcen.");
 		}
 		final String wholePathGenerated = String.format("%s/%s/%s/%sGenerated.java", rootFolder, generatedBasePath,
-				packagePath, poGeneric.getIdentifier());
+				fullPackagePath, poGeneric.getIdentifier());
 		Map<String, String> mapGenerated = writeFile(wholePathGenerated, context, tGenerated, poGeneric);
 
 		// Erzeuge Edit Po
@@ -156,7 +157,7 @@ public class GeneratorServiceImpl implements GeneratorService {
 			tEdit = velocityEngineClasspath.getTemplate("de/muenchen/selenipo/poEditable.vm");
 			logger.info("Verwende poEdit.vm aus resourcen.");
 		}
-		final String wholePathEdit = String.format("%s/%s/%s/%s.java", rootFolder, editableBasePath, packagePath,
+		final String wholePathEdit = String.format("%s/%s/%s/%s.java", rootFolder, editableBasePath, fullPackagePath,
 				poGeneric.getIdentifier());
 		// Überprüfe ob das Po bereits vorhanden ist
 		if (!doesEditPoAlreadyExist(wholePathEdit)) {
